@@ -25,8 +25,12 @@ LewanSoulPlanner::LewanSoulPlanner(int n,int channel) {
 	int startIndex=channel==0?0:indexSplit;
 	int endIndex=channel==0?indexSplit:numberOfServos;
 	motors=new LX16AServo*[numberOfServos];
-	for(int i=startIndex;i<endIndex;i++)
+	for(int i=startIndex;i<endIndex;i++){
 		motors[i]= new LX16AServo(&servoBus, i+1);
+		//motors[i]->readLimits();
+	}
+	servoBus._debug=true;
+	servoBus._deepDebug=true;
 }
 
 LewanSoulPlanner::~LewanSoulPlanner() {
@@ -89,7 +93,11 @@ void LewanSoulPlanner::loop(){
 	int startIndex=channel==0?0:indexSplit;
 	int endIndex=channel==0?indexSplit:numberOfServos;
 	bool clibarationRequired=false;
+	bool onefailed=false;
+
 	switch(state){
+	case FAULT:
+		break;
 	case StartupSerial:
 		if(channel==0)
 			servoBus.beginOnePinMode(&Serial1,SERIAL_BUS0); //
@@ -102,8 +110,8 @@ void LewanSoulPlanner::loop(){
 		Serial.println("\r\nBeginning Trajectory Planner "+String(channel));
 		pinMode(HOME_SWITCH_PIN, INPUT_PULLUP);
 		pinMode(MOTOR_DISABLE, INPUT_PULLUP);
-		for(int i=startIndex;i<endIndex;i++)
-				motors[i]->disable();
+//		for(int i=startIndex;i<endIndex;i++)
+//				motors[i]->disable();
 		state=waitingToreadPreferences;
 		pinMode(INDICATOR, OUTPUT);
 		break;
@@ -117,32 +125,51 @@ void LewanSoulPlanner::loop(){
 	case readPreferrences:
 		preferences.begin("Lewan", true);
 		for(int i=startIndex;i<endIndex;i++){
+			delay(1);
 			motors[i]->initialize();
-			uint8_t key = preferences.getUChar(("key"+String(i)).c_str(), 0);
-			if(key==FLASHKEY){
-				Serial.println("Ch:"+String(channel)+"Accessing Stored values for "+String(i));
-				motors[i]->staticOffset = preferences.getInt(("off"+String(i)).c_str(), -1);
-				motors[i]->minCentDegrees= lowerAngles[i];//preferences.getInt(("min"+String(i)).c_str(), -1);
-				motors[i]->maxCentDegrees= upperAngles[i];//preferences.getInt(("max"+String(i)).c_str(),-1);
+			delay(1);
+			int idRead = motors[i]->id_verify();
+			if(idRead!=motors[i]->_id){
+				Serial.println("Ch:"+String(channel)+" FAULTED chain on motor "+String(motors[i]->_id)+" returned ID of "+String(idRead));
+				onefailed=true;
+				//preferences.end();
+				//preferencesInUse=false;
+				//state=waitingToreadPreferences;
+				//delay(1000);
+				//return;
 			}else{
-				Serial.println("Ch:"+String(channel)+" No stored values for "+String(i));
-				clibarationRequired=true;
+				Serial.println("Ch:"+String(channel)+" MOTOR OK! #"+String(motors[i]->_id));
+				uint8_t key = preferences.getUChar(("key"+String(i)).c_str(), 0);
+				if(key==FLASHKEY){
+					Serial.println("Ch:"+String(channel)+"Accessing Stored values for "+String(i));
+					motors[i]->staticOffset = preferences.getInt(("off"+String(i)).c_str(), -1);
+					motors[i]->minCentDegrees= lowerAngles[i];//preferences.getInt(("min"+String(i)).c_str(), -1);
+					motors[i]->maxCentDegrees= upperAngles[i];//preferences.getInt(("max"+String(i)).c_str(),-1);
+				}else{
+					Serial.println("Ch:"+String(channel)+" No stored values for "+String(i));
+					clibarationRequired=true;
+				}
 			}
+
 		}
 		preferences.end();
 		preferencesInUse=false;
-		if(clibarationRequired){
-			state=WaitForHomePress;
-		}else{
-			state=running;
-			read( startIndex, endIndex);
-			for(int i=startIndex;i<endIndex;i++){
-				targets[i]=positions[i];
-				motors[i]->setLimitsTicks(	(lowerAngles[i]-motors[i]->staticOffset)/24,
-											(upperAngles[i]-motors[i]->staticOffset)/24
-											);
+		if (!onefailed) {
+			if (clibarationRequired) {
+				state = WaitForHomePress;
+			} else {
+				state = running;
+				read(startIndex, endIndex);
+				for (int i = startIndex; i < endIndex; i++) {
+					targets[i] = positions[i];
+					motors[i]->setLimitsTicks(
+							(lowerAngles[i] - motors[i]->staticOffset) / 24,
+							(upperAngles[i] - motors[i]->staticOffset) / 24);
+				}
+				digitalWrite(INDICATOR, 1);
 			}
-			digitalWrite(INDICATOR, 1);
+		}else{
+			delay(1000);
 		}
 		break;
 	case waitingtoWritePreferences:

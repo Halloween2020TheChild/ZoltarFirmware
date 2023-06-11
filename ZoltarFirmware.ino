@@ -6,6 +6,7 @@
 #include <server/NameCheckerServer.h>
 #include "src/commands/GetPIDData.h"
 #include "src/commands/SetPIDSetpoint.h"
+#include <ESP32Servo.h>
 
 //Create a wifi manager
 static WifiManager manager;
@@ -39,14 +40,15 @@ void MotorThread1(void * param){
 void setup() {
 	planner1 =  new LewanSoulPlanner(7,0);
 	planner2 =  new LewanSoulPlanner(7,1);
-	manager.setup();
-	coms.attach(new SetPIDSetpoint(7,planner1,planner2));
-	coms.attach(new GetPIDData(7,planner1,planner2));
+
+	coms.attach((PacketEvent *)new SetPIDSetpoint(7,planner1,planner2));
+	coms.attach((PacketEvent *)new GetPIDData(7,planner1,planner2));
 	coms.attach(new NameCheckerServer(&name));
 	xTaskCreatePinnedToCore(MotorThread0, "Motor Thread 0", 8192, NULL, 1, // low priority timout thread
 					&complexHandlerTaskUS, 1);
 	xTaskCreatePinnedToCore(MotorThread1, "Motor Thread 1", 8192, NULL, 1, // low priority timout thread
 						&complexHandlerTaskUS, 1);
+	manager.setup();
 }
 
 void loop() {
