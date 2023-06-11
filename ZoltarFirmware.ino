@@ -13,7 +13,7 @@ static WifiManager manager;
 static UDPSimplePacket coms;
 static LewanSoulPlanner * planner1=NULL;
 static LewanSoulPlanner * planner2=NULL;
-static String name ="GroguArm";
+static String name ="Zoltar";
 static TaskHandle_t complexHandlerTaskUS;
 
 void MotorThread0(void * param){
