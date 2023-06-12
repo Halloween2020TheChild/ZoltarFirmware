@@ -15,7 +15,8 @@ static LewanSoulPlanner * planner1=NULL;
 static LewanSoulPlanner * planner2=NULL;
 static String name ="Zoltar";
 static TaskHandle_t complexHandlerTaskUS;
-
+Servo eyelid;
+Servo lift;
 void MotorThread0(void * param){
 	Serial.println("Starting the Motor loop thread");
 
@@ -38,6 +39,11 @@ void MotorThread1(void * param){
 }
 
 void setup() {
+	eyelid.attach(12);
+	lift.attach(14);
+	eyelid.write(90);
+	lift.write(90);
+
 	planner1 =  new LewanSoulPlanner(7,0);
 	planner2 =  new LewanSoulPlanner(7,1);
 
@@ -49,6 +55,7 @@ void setup() {
 	xTaskCreatePinnedToCore(MotorThread1, "Motor Thread 1", 8192, NULL, 1, // low priority timout thread
 						&complexHandlerTaskUS, 1);
 	manager.setup();
+
 }
 
 void loop() {

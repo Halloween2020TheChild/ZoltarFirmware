@@ -125,9 +125,8 @@ void LewanSoulPlanner::loop(){
 	case readPreferrences:
 		preferences.begin("Lewan", true);
 		for(int i=startIndex;i<endIndex;i++){
-			delay(1);
 			motors[i]->initialize();
-			delay(1);
+
 			int idRead = motors[i]->id_verify();
 			if(idRead!=motors[i]->_id){
 				Serial.println("Ch:"+String(channel)+" FAULTED chain on motor "+String(motors[i]->_id)+" returned ID of "+String(idRead));
