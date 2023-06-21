@@ -11,8 +11,8 @@ GPIOServer::GPIOServer() :
 		PacketEventAbstract(1811) //https://en.wikipedia.org/wiki/Tecumseh%27s_War
 {
 	pinMode(output1, OUTPUT);
-	pinMode(input1, INPUT);
-	pinMode(input2, INPUT);
+	pinMode(input1, INPUT_PULLUP);
+	pinMode(input2, INPUT_PULLUP);
 }
 
 GPIOServer::~GPIOServer() {
