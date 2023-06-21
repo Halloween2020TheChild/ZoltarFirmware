@@ -8,7 +8,7 @@
 #ifndef SRC_COMMANDS_SETPIDSETPOINT_H_
 #define SRC_COMMANDS_SETPIDSETPOINT_H_
 #include <SimplePacketComs.h>
-#include "../../LewanSoulPlanner.h"
+#include "../LewanSoulPlanner.h"
 
 class SetPIDSetpoint: public PacketEventAbstract {
 	LewanSoulPlanner * planner;LewanSoulPlanner * planner2;

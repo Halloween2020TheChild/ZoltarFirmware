@@ -5,3 +5,5 @@
  [Instructions to Open Projects in Eclipse](https://github.com/WPIRoboticsEngineering/RobotInterfaceBoard/blob/master/UseEclipse.md)
  
  Use esp32 1.0x toolchain
+ 
+ Use SLoeber 4.4.1

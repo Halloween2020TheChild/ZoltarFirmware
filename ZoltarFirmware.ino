@@ -7,6 +7,7 @@
 #include "src/commands/GetPIDData.h"
 #include "src/commands/SetPIDSetpoint.h"
 #include <ESP32Servo.h>
+#include "src/LewanSoulPlanner.h"
 
 //Create a wifi manager
 static WifiManager manager;

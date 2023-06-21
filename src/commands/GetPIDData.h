@@ -8,7 +8,7 @@
 #ifndef SRC_COMS_GETPIDDATA_H_
 #define SRC_COMS_GETPIDDATA_H_
 #include <SimplePacketComs.h>
-#include "../../LewanSoulPlanner.h"
+#include "../LewanSoulPlanner.h"
 class GetPIDData: public PacketEventAbstract {
 private:
 	LewanSoulPlanner * planner;LewanSoulPlanner * planner2;
