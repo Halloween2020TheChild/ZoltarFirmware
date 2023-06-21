@@ -8,6 +8,7 @@
 #include "src/commands/SetPIDSetpoint.h"
 #include <ESP32Servo.h>
 #include "src/LewanSoulPlanner.h"
+#include "src/commands/GPIOServer.h"
 
 //Create a wifi manager
 static WifiManager manager;
@@ -50,6 +51,7 @@ void setup() {
 
 	coms.attach((PacketEvent *)new SetPIDSetpoint(7,planner1,planner2));
 	coms.attach((PacketEvent *)new GetPIDData(7,planner1,planner2));
+	coms.attach((PacketEvent *)new GPIOServer());
 	coms.attach(new NameCheckerServer(&name));
 	xTaskCreatePinnedToCore(MotorThread0, "Motor Thread 0", 8192, NULL, 1, // low priority timout thread
 					&complexHandlerTaskUS, 1);
