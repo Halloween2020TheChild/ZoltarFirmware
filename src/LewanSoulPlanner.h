@@ -21,6 +21,8 @@ enum LewanSoulState_t {
 	StartupSerial, WaitForHomePress,WaitForHomeRelease,WaitingForCalibrationToFinish,WaitingToRun,running,disabled,waitingToreadPreferences,readPreferrences,waitingtoWritePreferences,writePreferences,FAULT
 // Add more states here and be sure to add them to the cycle
 };
+
+void setForceDisable(bool b);
 class LewanSoulPlanner {
 	Preferences preferences;
 	LX16ABus servoBus;

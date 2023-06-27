@@ -13,6 +13,11 @@ int32_t startingAngles []= {-8999, 4440, 4731, -38, 10329, -8976,	0};
 int32_t upperAngles []= {		9000, 	9000, 	9000, 9000, 15500, 	11000, 	11000};
 int32_t lowerAngles []= {		-9000, -9000,  -9000, -13000, -6000, 	-11000, -11000};
 static bool preferencesInUse=false;
+static bool forceDisable=false;
+
+void setForceDisable(bool b){
+	forceDisable=b;
+}
 
 //FlashStorage(cal1, float);
 //FlashStorage(cal2, float);
@@ -264,7 +269,7 @@ void LewanSoulPlanner::loop(){
 		//no break
 	case running:
 		servoBus.debug(false);
-		if(digitalRead(MOTOR_DISABLE)){
+		if(digitalRead(MOTOR_DISABLE) && !forceDisable){
 			update( startIndex, endIndex);
 			state=WaitingToRun;
 		}else{
@@ -283,11 +288,11 @@ void LewanSoulPlanner::loop(){
 //				Serial.print(" , ");
 //		}
 //		Serial.print(" ] ");
-		if(digitalRead(MOTOR_DISABLE)){
+		if(digitalRead(MOTOR_DISABLE) && !forceDisable){
 			state=running;
 			Serial.println("\r\nEnable Motors");
 		}else
-			if(!digitalRead(HOME_SWITCH_PIN)){
+			if(!digitalRead(HOME_SWITCH_PIN) ){
 				state=WaitForHomePress;
 			}
 		break;

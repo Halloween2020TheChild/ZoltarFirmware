@@ -9,8 +9,10 @@
 #define SRC_COMMANDS_GPIOSERVER_H_
 
 #include <SimplePacketComs.h>
+#include "../LewanSoulPlanner.h"
+
 #include <Arduino.h>
-#define input1 0
+#define input1 27
 #define input2 17
 #define output1 13
 

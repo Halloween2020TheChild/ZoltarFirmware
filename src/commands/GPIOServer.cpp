@@ -26,5 +26,6 @@ void GPIOServer::event(float * buffer){
 	uint8_t *bytes = (uint8_t*) buffer;
 	bytes[0]=digitalRead(input1)?1:0;
 	bytes[1]=digitalRead(input2)?1:0;
-	digitalWrite(output1, bytes[2]>0||bytes[1]);
+	digitalWrite(output1, bytes[2]>0);
+	setForceDisable(bytes[3]>0);
 }
