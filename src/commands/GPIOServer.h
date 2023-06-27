@@ -10,9 +10,9 @@
 
 #include <SimplePacketComs.h>
 #include <Arduino.h>
-#define input1 4
+#define input1 0
 #define input2 17
-#define output1 16
+#define output1 13
 
 class GPIOServer: public PacketEventAbstract  {
 public:

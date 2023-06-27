@@ -11,7 +11,7 @@
 #include <lx16a-servo.h>
 #include <Preferences.h>
 #define HOME_SWITCH_PIN 0
-#define INDICATOR 13
+#define INDICATOR 26
 #define MOTOR_DISABLE 27
 #define plannerLoopTimeMs 15
 #define FLASHKEY 37
